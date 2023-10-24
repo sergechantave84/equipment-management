@@ -3,6 +3,7 @@
 namespace App\Subscriber;
 
 use App\Entity\Equipement;
+use App\Entity\Equipment;
 use App\Exception\BaseException;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -51,7 +52,7 @@ class ControlePathSubscriber implements EventSubscriberInterface
         $route = $request->get('_route');
         if (in_array($route, ['api_users_GET_item', 'api_users_PUT_item'])) {
             $user = $this->security->getUser();
-            if ($user instanceof Equipement) {
+            if ($user instanceof Equipment) {
                 if ($user->getId() !== $request->attributes->get('id')) {
                     throw new BaseException(
                         $user,
@@ -69,29 +70,6 @@ class ControlePathSubscriber implements EventSubscriberInterface
     public function onKernelResponse(ResponseEvent $event)
     {
         $request = $event->getRequest();
-        if ($request->getUri() == 'http://weboconsulting.org'
-            || $request->getUri() == 'http://weboconsulting.org/'
-        ) {
-            $response = new RedirectResponse($this->router->generate('accueil'));
-            $event->setResponse($response);
-        } else if ($request->getUri() == 'https://weboconsulting.org'
-            || $request->getUri() == 'https://weboconsulting.org/'
-            || $request->getUri() == 'https://weboconsulting.legtux.org'
-            || $request->getUri() == 'https://weboconsulting.legtux.org/'
-            || $request->getUri() == 'https://www.weboconsulting.org'
-            || $request->getUri() == 'https://www.weboconsulting.org/'
-            || $request->getUri() == 'https://www.weboconsulting.legtux.org'
-            || $request->getUri() == 'https://www.weboconsulting.legtux.org/'
-            || $request->getUri() == 'http://weboconsulting.legtux.org'
-            || $request->getUri() == 'http://weboconsulting.legtux.org/'
-            || $request->getUri() == 'http://www.weboconsulting.org'
-            || $request->getUri() == 'http://www.weboconsulting.org/'
-            || $request->getUri() == 'http://www.weboconsulting.legtux.org'
-            || $request->getUri() == 'http://www.weboconsulting.legtux.org/'
-        ) {
-            $response = new RedirectResponse('https://weboconsulting.org/public/accueil');
-            $event->setResponse($response);
-        }
     }
 
     /**
