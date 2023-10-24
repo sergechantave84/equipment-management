@@ -14,25 +14,25 @@ use Doctrine\ORM\Tools\Pagination\Paginator;
 class EquipmentRepository extends EntityRepository
 {
     // On ajoute 2 arguments : le nombre d'article par page, ainsi que la page courante
-	public function getProjets($nombreParPage, $page)
-	{
-		// On déplace la vérification du numéro de page dans cette méthode
-		if ($page < 1) {
-		throw new \InvalidArgumentException('L\'argument $page ne peut
-		être inférieur à 1 (valeur : "'.$page.'").');
-		}
-		// La construction de la requête reste inchangée
-		$query = $this->createQueryBuilder('a')
-						->orderBy('a.dateCreate', 'DESC')
-						->getQuery();
-		// On définit l'article à partir duquel commencer la liste
-		$query->setFirstResult(($page-1) * $nombreParPage)
-		// Ainsi que le nombre d'articles à afficher
-				->setMaxResults($nombreParPage);
-		// Enfin, on retourne l'objet Paginator correspondant à la requête construite
-		// (n'oubliez pas le use correspondant en début de fichier)
-		return new Paginator($query);
-	}
+    public function getProjets($nombreParPage, $page)
+    {
+        // On déplace la vérification du numéro de page dans cette méthode
+        if ($page < 1) {
+            throw new \InvalidArgumentException('L\'argument $page ne peut
+		être inférieur à 1 (valeur : "' . $page . '").');
+        }
+        // La construction de la requête reste inchangée
+        $query = $this->createQueryBuilder('a')
+                        ->orderBy('a.dateCreate', 'DESC')
+                        ->getQuery();
+        // On définit l'article à partir duquel commencer la liste
+        $query->setFirstResult(($page - 1) * $nombreParPage)
+        // Ainsi que le nombre d'articles à afficher
+                ->setMaxResults($nombreParPage);
+        // Enfin, on retourne l'objet Paginator correspondant à la requête construite
+        // (n'oubliez pas le use correspondant en début de fichier)
+        return new Paginator($query);
+    }
 
     public function getUserByEmail(string $email)
     {

@@ -40,7 +40,6 @@ class EquipmentController extends AbstractController
                 'code'    => Response::HTTP_BAD_REQUEST,
                 'message' => 'Les paramètres url et uid sont obligatoires',
             ];
-
         }
         $traceMap = new Equipment();
         /*$traceMap->setUid($body->uid);
