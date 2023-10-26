@@ -2,91 +2,110 @@
 
 namespace App\Manager;
 
-use App\Entity\Customer;
 use App\Entity\Equipment;
-use App\Enum\UserType;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
-use Symfony\Component\DependencyInjection\ContainerInterface;
 use App\Helper\Utils;
 
-/**
- * CustomerManager class
- */
 class EquipmentManager extends BaseManager
 {
-    //TODO: UserPasswordEncoderInterface is deprecated since symfony 5.3 : use UserPasswordHasherInterface instead
-    private UserPasswordEncoderInterface $encoder;
-
-    /**
-     * Undocumented function
-     *
-     * @param EntityManagerInterface $entityManager
-     * @param UserPasswordEncoderInterface $encoder
-     */
-    public function __construct(
-        EntityManagerInterface $entityManager,
-        UserPasswordEncoderInterface $encoder
-    ) {
-        parent::__construct($entityManager, Customer::class);
-        $this->encoder = $encoder;
+    public function __construct(EntityManagerInterface $entityManager)
+    {
+        parent::__construct($entityManager, Equipment::class);
     }
 
-    /**
-     * @param bool|null $isCreate
-     * @return Customer
-     */
-    public function saveCustomer(?bool $isCreate = false): Customer
+    public function checkParamsIfExist(Request $request): array
     {
-        $customer = null;
-        if ($isCreate) {
-            $customer = new Customer();
-            $customer->setCodeClient(Utils::generateuuidv4(16));
-            $customer->setCreatedAt(new \DateTime());
-            $customer->setUpdatedAt(new \DateTime());
+        $body = json_decode($request->getContent());
+        $code = Response::HTTP_OK;
+        $messageOK = 'Paramètres name, number et description récupérés';
+        $messageError = 'Les paramètres suivants sont obligatoires:';
+        if (!property_exists($body, 'name')) {
+            $messageError .= PHP_EOL . '- name: nom de l\'équipement';
+            $code = Response::HTTP_PRECONDITION_REQUIRED;
         }
-        $customer->setUpdatedAt(new \DateTime());
-        if ($isCreate) {
-            $this->save($customer);
+        if (!property_exists($body, 'number')) {
+            $messageError .= PHP_EOL . '- number: numéro de l\'équipement';
+            $code = Response::HTTP_PRECONDITION_REQUIRED;
         }
-        $this->flush();
+        if (!property_exists($body, 'description')) {
+            $messageError .= PHP_EOL . '- description: description de l\'équipement';
+            $code = Response::HTTP_PRECONDITION_REQUIRED;
+        }
+        $return = [
+            'code'    => $code,
+            'message' => $messageOK,
+            'data'    => $body,
+        ];
+        if ($code === Response::HTTP_PRECONDITION_REQUIRED) {
+            $return['message'] = $messageError;
+        }
 
-        return $customer;
+        return $return;
     }
 
-    /**
-     * @param Customer|null $customer
-     * @param $data
-     * @param string $userGroup
-     * @param bool|null $isCreate
-     *
-     * @return Equipment
-     */
-    public function saveUser(?Customer $customer, $data, string $userGroup, ?bool $isCreate = false): Equipment
+    public function saveEquipment($body, ?string $id): Equipment
     {
-        $role = $customer ? UserType::ROLE_CUSTOMER : UserType::ROLE_FREE;
-        if ($isCreate) {
-            $user = new Equipment();
+        if ($id) {
+            $equipment = $this->find($id);
         } else {
-            $user = $this->entityManager->getRepository(Equipment::class)->findOneBy(['email' => $data->email]);
+            $equipment = new Equipment();
+            $equipment->setId(Utils::generateuuidv4(16));
         }
-        $hash = $this->encoder->encodePassword($user, $data->password);
-        $user->setId(Utils::generateuuidv4(16))
-             ->setFirstName($data->firstName)
-             ->setLastName($data->lastName)
-             ->setEmail($data->email)
-             ->setPassword($hash)
-             ->setCustomer($customer)
-             ->setGroupUser($customer ? $userGroup : null)
-             ->setRoles([$role]);
+        $equipment->setName($body->name)
+                  ->setCategory(property_exists($body, 'category') ? $body->category : null)
+                  ->setNumber($body->number)
+                  ->setDescription($body->description)
+        ;
 
-        if ($isCreate) {
-            $this->save($user);
+        if (!$id) {
+            $this->save($equipment);
         }
         $this->flush();
 
-        return $user;
+        return $equipment;
+    }
+
+    /**
+     * @param Request $request
+     *
+     * @return array
+     */
+    public function deleteEquipment(Request $request): array
+    {
+        $id = $request->attributes->get('id');
+        $equipment = $this->find($id);
+        if ($equipment instanceof Equipment) {
+            $equipment->setDeleted(true);
+            $this->flush();
+            $return = [
+                'code'    => Response::HTTP_OK,
+                'message' => 'Equipement supprimé avec succès',
+            ];
+        } else {
+            $return = [
+                'code'    => Response::HTTP_NOT_FOUND,
+                'message' => 'Aucun équipement trouvé avec l\'id ' . $id,
+            ];
+        }
+
+        return $return;
+    }
+
+    public function listEquipment(Request $request): array
+    {
+        $nbLinePerPage = $request->get('nbLinePerPage');
+        if (!$nbLinePerPage || $nbLinePerPage < 1) {
+            $nbLinePerPage = $_ENV['NUMBER_LINE_PER_PAGE'];
+        }
+        $page = $request->get('page');
+        if (!$page || $page < 1) {
+            $page = $_ENV['PAGE'];
+        }
+        $name = $request->get('name');
+        $category = $request->get('category');
+
+        return $this->repository->listEquipment($nbLinePerPage, $page, $name, $category);
     }
 }

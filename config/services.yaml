@@ -5,6 +5,8 @@
 # https://symfony.com/doc/current/best_practices.html#use-parameters-for-application-configuration
 parameters:
     PROJECT_DIR: '%kernel.project_dir%'
+    NUMBER_LINE_PER_PAGE: '%env(NUMBER_LINE_PER_PAGE)%'
+    PAGE: '%env(PAGE)%'
 
 services:
     # default configuration for services in *this* file
@@ -34,3 +36,8 @@ services:
         public: true
         tags:
             - { name: kernel.event_listener, event: kernel.exception, method: onKernelException }
+
+    App\Listener\DatabaseListener:
+        tags:
+            - { name: doctrine.event_listener, event: prePersist, method: prePersist }
+            - { name: doctrine.event_listener, event: postUpdate, method: postUpdate }

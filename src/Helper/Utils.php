@@ -26,7 +26,7 @@ class Utils
     /**
      * @return Serializer
      */
-    public static function getJsonSerializer()
+    public static function getJsonSerializer(): Serializer
     {
         $classMetadataFactory = new ClassMetadataFactory(new AnnotationLoader(new AnnotationReader()));
         $metadataAwareNameConverter = new MetadataAwareNameConverter($classMetadataFactory);
