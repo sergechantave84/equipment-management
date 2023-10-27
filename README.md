@@ -1,4 +1,4 @@
-# Description
+## Description
 API de gestion d'équipements
 
 ## Pré-requis
@@ -27,9 +27,10 @@ php bin/console d:d:create
 ```
 
 ### Créer les tables et les index
+Choisir entre la méthode 1 et la méthode 2:
 - méthode 1
 ```
-php bin/console d:s:u --force
+php bin/console d:s:u --force --complete
 ```
 
 - méthode 2
@@ -55,3 +56,20 @@ Depuis un client d'API comme Postman, utiliser http://localhost:8000 comme host
 ```
 GET http://localhost:8000/api/equipments
 ```
+## Tests unitaires et fonctionnels
+### Créer la base de test
+```
+php bin/console d:d:c --env=test
+```
+
+### Créer les tables et les index de la base de test
+```
+php bin/console d:s:u --force --env=test --complete
+```
+
+### Lancer les tests
+```
+php bin/phpunit
+```
+
+
