@@ -29,9 +29,6 @@ services:
         resource: '../src/Controller/'
         tags: [ 'controller.service_arguments' ]
 
-    App\Subscriber\ControlePathSubscriber:
-        public: true
-
     App\Listener\ExceptionListener:
         public: true
         tags:
