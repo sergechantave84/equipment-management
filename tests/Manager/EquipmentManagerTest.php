@@ -4,10 +4,10 @@ namespace App\Tests\Manager;
 
 use App\Entity\Equipment;
 use App\Manager\EquipmentManager;
-use App\Tests\EmisysKernelTestCase;
+use App\Tests\EMKernelTestCase;
 use Symfony\Component\HttpFoundation\Request;
 
-class EquipmentManagerTest extends EmisysKernelTestCase
+class EquipmentManagerTest extends EMKernelTestCase
 {
     /** @var EquipmentManager */
     private $service;

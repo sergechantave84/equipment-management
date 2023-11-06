@@ -6,9 +6,9 @@ use App\Tests\traits\SetEntityIdTrait;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 
-abstract class EmisysKernelTestCase extends KernelTestCase
+abstract class EMKernelTestCase extends KernelTestCase
 {
-    use EmisysTestTrait {
+    use EMTestTrait {
         getEntityManager as protected traitGetEntityManager;
     }
     use SetEntityIdTrait;

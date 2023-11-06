@@ -3,6 +3,7 @@
 namespace App\Listener;
 
 use App\Enum\CodeResponseType;
+use App\Exception\BaseException;
 use Symfony\Component\HttpKernel\Event\ExceptionEvent;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
@@ -20,6 +21,7 @@ class ExceptionListener
             'message' => $exception->getMessage(),
             'file'    => $file,
             'line'    => $exception->getLine(),
+            'data'    => ($exception instanceof BaseException) ? $exception->getData() : null,
         ];
         $response = new JsonResponse($error, $code);
         $event->setResponse($response);

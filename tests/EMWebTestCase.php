@@ -8,9 +8,9 @@ use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\HttpFoundation\Response;
 
-abstract class EmisysWebTestCase extends WebTestCase
+abstract class EMWebTestCase extends WebTestCase
 {
-    use EmisysTestTrait;
+    use EMTestTrait;
     use SetEntityIdTrait;
 
     protected ?KernelBrowser $client = null;

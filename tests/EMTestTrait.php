@@ -6,7 +6,7 @@ namespace App\Tests;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
 
-trait EmisysTestTrait
+trait EMTestTrait
 {
     protected ?EntityManagerInterface $em = null;
     protected RequestStack $stack;

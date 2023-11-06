@@ -4,7 +4,7 @@ namespace App\Tests;
 
 use Symfony\Component\HttpFoundation\Response;
 
-abstract class EmisysApiTestCase extends EmisysWebTestCase
+abstract class EMApiTestCase extends EMWebTestCase
 {
     protected const GET = "GET";
     protected const PATCH = "PATCH";

@@ -4,11 +4,10 @@ namespace App\Tests\Controller\Equipment;
 
 use App\Entity\Equipment;
 use App\Helper\Utils;
-use App\Manager\EquipmentManager;
-use App\Tests\EmisysApiTestCase;
+use App\Tests\EMApiTestCase;
 use Symfony\Component\HttpFoundation\Response;
 
-class EquipmentControllerTest extends EmisysApiTestCase
+class EquipmentControllerTest extends EMApiTestCase
 {
     public function testListEquipment(): void
     {
